@@ -13,6 +13,8 @@ final class WhisperKitTranscriptionProvider: TranscriptionProvider, @unchecked S
     func appendLivePCM(_ buffer: AVAudioPCMBuffer) {
         guard let data = buffer.floatChannelData?[0] else { return }
         let count = Int(buffer.frameLength); let new = Array(UnsafeBufferPointer(start: data, count: count))
+        let rms = sqrt(new.reduce(Float.zero) { $0 + ($1 * $1) } / Float(max(new.count, 1)))
+        guard rms >= 0.01 else { return }
         let snapshot: [Float]? = liveState.withLock { state in
             state.samples.append(contentsOf: new)
             // Re-transcribe the rolling 30 seconds every four seconds. WhisperKit's file pass remains authoritative after Stop.
@@ -25,7 +27,8 @@ final class WhisperKitTranscriptionProvider: TranscriptionProvider, @unchecked S
     private func transcribeLive(_ samples: [Float]) async {
         defer { liveState.withLock { $0.inFlight = false } }
         guard let whisperKit else { return }
-        let result = await whisperKit.transcribe(audioArrays: [samples])
+        let options = DecodingOptions(temperature: 0, temperatureFallbackCount: 0, compressionRatioThreshold: 2.4, logProbThreshold: -1.0, firstTokenLogProbThreshold: -1.5, noSpeechThreshold: 0.7)
+        let result = await whisperKit.transcribe(audioArrays: [samples], decodeOptions: options)
         let text = result.first??.map(\.text).joined(separator: " ") ?? ""
         let callback = liveState.withLock { $0.handler }
         if !text.isEmpty { callback?(text) }

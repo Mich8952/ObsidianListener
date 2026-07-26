@@ -1,7 +1,7 @@
 import Foundation
 
 enum SummaryError: LocalizedError { case missingAPIKey, invalidResponse, http(Int, String)
-    var errorDescription: String? { switch self { case .missingAPIKey: "Add a Gemma API key in Settings."; case .invalidResponse: "The summary provider returned invalid structured JSON."; case let .http(code, text): "Summary provider error \(code): \(text)" } }
+    var errorDescription: String? { switch self { case .missingAPIKey: "Add an API key in Settings."; case .invalidResponse: "The summary provider returned invalid structured JSON."; case let .http(code, text): "Summary provider error \(code): \(text)" } }
 }
 
 struct NoSummaryProvider: SummaryProvider { let identity = "No Summary"; func summarize(transcript: Transcript) async throws -> MeetingSummary? { nil } }

@@ -28,7 +28,8 @@ final class CombinedAudioCaptureService: NSObject, AudioCaptureService, SCStream
         let microphoneOK: Bool
         if mic == .notDetermined { microphoneOK = await AVCaptureDevice.requestAccess(for: .audio) } else { microphoneOK = mic == .authorized }
         guard microphoneOK else { return .microphoneDenied }
-        return CGPreflightScreenCaptureAccess() ? .ready : .screenRecordingDenied
+        let screenRecordingOK = CGPreflightScreenCaptureAccess() || CGRequestScreenCaptureAccess()
+        return screenRecordingOK ? .ready : .screenRecordingDenied
     }
     func start(sessionDirectory: URL, sessionStart: Date) async throws {
         guard let targetFormat else { throw CaptureError.audioFormatUnavailable }
@@ -58,10 +59,31 @@ final class CombinedAudioCaptureService: NSObject, AudioCaptureService, SCStream
         try WavMixer.mix(microphoneURL, systemURL, to: mixed)
         return CapturedAudio(microphoneURL: microphoneURL, systemURL: systemURL, mixedWAVURL: mixed, duration: maximumTimestamp)
     }
-    private func writeMicrophone(_ buffer: AVAudioPCMBuffer, timestamp: AVAudioTime) { let t = Date.now.timeIntervalSince(sessionStart); write(buffer, to: micFile, timestamp: t) }
+    private func writeMicrophone(_ buffer: AVAudioPCMBuffer, timestamp: AVAudioTime) {
+        guard let normalized = normalizeMicrophoneBuffer(buffer) else {
+            onHealth?(.degraded("Microphone audio could not be converted to the required format."))
+            return
+        }
+        let t = Date.now.timeIntervalSince(sessionStart)
+        write(normalized, to: micFile, timestamp: t, publishLive: true)
+    }
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) { guard type == .audio, let targetFormat, let pcm = Self.pcm(from: sampleBuffer, target: targetFormat) else { return }; let seconds = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)); write(pcm, to: systemFile, timestamp: seconds.isFinite ? seconds : Date.now.timeIntervalSince(sessionStart)) }
     func stream(_ stream: SCStream, didStopWithError error: any Error) { onHealth?(.degraded("System audio stopped: \(error.localizedDescription). Microphone recording continues.")) }
-    private func write(_ buffer: AVAudioPCMBuffer, to file: AVAudioFile?, timestamp: TimeInterval) { io.async { [weak self] in guard let self, let file else { return }; do { try file.write(from: buffer); self.maximumTimestamp = max(self.maximumTimestamp, timestamp + Double(buffer.frameLength) / 16_000); self.onPCM?(buffer, timestamp) } catch { self.onHealth?(.degraded("Audio source write failed: \(error.localizedDescription)")) } } }
+    private func write(_ buffer: AVAudioPCMBuffer, to file: AVAudioFile?, timestamp: TimeInterval, publishLive: Bool = false) { io.async { [weak self] in guard let self, let file else { return }; do { try file.write(from: buffer); self.maximumTimestamp = max(self.maximumTimestamp, timestamp + Double(buffer.frameLength) / 16_000); if publishLive { self.onPCM?(buffer, timestamp) } } catch { self.onHealth?(.degraded("Audio source write failed: \(error.localizedDescription)")) } } }
+    private func normalizeMicrophoneBuffer(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
+        guard let targetFormat, let converter = AVAudioConverter(from: buffer.format, to: targetFormat) else { return nil }
+        let capacity = AVAudioFrameCount(ceil(Double(buffer.frameLength) * targetFormat.sampleRate / buffer.format.sampleRate)) + 1
+        guard let output = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: capacity) else { return nil }
+        var supplied = false
+        var conversionError: NSError?
+        let status = converter.convert(to: output, error: &conversionError) { _, inputStatus in
+            guard !supplied else { inputStatus.pointee = .endOfStream; return nil }
+            supplied = true
+            inputStatus.pointee = .haveData
+            return buffer
+        }
+        return status == .error ? nil : output
+    }
     @objc private func configurationChanged() { guard engine.isRunning else { return }; do { engine.stop(); try engine.start(); onHealth?(.healthy) } catch { onHealth?(.degraded("Microphone device changed and could not restart. System audio continues.")) } }
     private static func pcm(from sampleBuffer: CMSampleBuffer, target: AVAudioFormat) -> AVAudioPCMBuffer? {
         guard let description = CMSampleBufferGetFormatDescription(sampleBuffer), let source = AVAudioPCMBuffer(pcmFormat: AVAudioFormat(cmAudioFormatDescription: description), frameCapacity: AVAudioFrameCount(CMSampleBufferGetNumSamples(sampleBuffer))) else { return nil }; let format = AVAudioFormat(cmAudioFormatDescription: description)

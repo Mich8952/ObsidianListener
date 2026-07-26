@@ -30,7 +30,14 @@ private struct MenuContentView: View {
             HStack { switch coordinator.state { case .idle, .completed, .recoverableFailure: if !coordinator.modelReady { Button("Download Whisper Model") { Task { await coordinator.prepareModel() } } } else { Button("Start") { Task { await coordinator.start() } }.disabled(settings.settings.obsidianBookmark == nil) }; case .recording: Button("Stop") { Task { await coordinator.stop() } }.buttonStyle(.borderedProminent); default: ProgressView() }; Spacer(); Button("Open Last Note") { coordinator.openLastNote() }.disabled(coordinator.session?.exportedNotePath == nil) }
             if case .recoverableFailure = coordinator.state { Button("Retry Last Recording") { Task { await coordinator.retryLastRecording() } } }
             Divider()
-            HStack { SettingsLink { Text("Settings…") }; Spacer(); Button("Quit MeetingNotes") { NSApplication.shared.terminate(nil) } }
+            HStack {
+                SettingsLink { Text("Settings…") }
+                Spacer()
+                Button(role: .destructive) { NSApplication.shared.terminate(nil) } label: {
+                    Label("Quit MeetingNotes", systemImage: "power")
+                }
+                .keyboardShortcut("q")
+            }
         }.padding().frame(width: 380)
     }
     private var status: String { switch coordinator.state { case .idle: "Ready"; case .preparing: "Preparing"; case .recording: "Recording"; case .stopping: "Finalizing audio"; case .awaitingTitle: "Ready to transcribe"; case .transcribing: "Transcribing"; case .summarizing: "Summarizing"; case .exporting: "Exporting"; case .completed: "Exported"; case let .recoverableFailure(error): error } }
@@ -42,9 +49,19 @@ private struct SettingsView: View {
     @State private var apiKey = ""
     var body: some View { Form {
         Section("Obsidian") { Button("Choose Obsidian Folder…") { let panel = NSOpenPanel(); panel.canChooseDirectories = true; panel.canChooseFiles = false; panel.allowsMultipleSelection = false; if panel.runModal() == .OK, let url = panel.url { try? settings.setObsidianFolder(url) } }; Text(settings.settings.obsidianBookmark == nil ? "No folder selected" : "Folder selected").foregroundStyle(.secondary) }
-        Section("Summary") { Picker("Provider", selection: binding(\.summaryProvider)) { ForEach(SummaryProviderKind.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) } }; TextField("Gemma model", text: binding(\.gemmaModel)); SecureField("Gemma API key", text: $apiKey); TextField("Ollama endpoint", text: binding(\.ollamaEndpoint)); TextField("Ollama model", text: binding(\.ollamaModel)) }
+        Section("Summary") {
+            Picker("Provider", selection: summaryProviderBinding) {
+                Text("API").tag(SummaryProviderKind.gemma)
+                Text("Local").tag(SummaryProviderKind.ollama)
+            }
+            TextField("API model", text: binding(\.gemmaModel))
+            SecureField("API key", text: $apiKey)
+            TextField("Local endpoint", text: binding(\.ollamaEndpoint))
+            TextField("Local model", text: binding(\.ollamaModel))
+        }
         Section("Transcription") { TextField("Whisper model", text: binding(\.whisperModel)) }
         Section("Export") { Toggle("Save Summary", isOn: binding(\.saveSummary)); Toggle("Save Transcript", isOn: binding(\.saveTranscript)); Toggle("Keep Original Audio", isOn: binding(\.keepOriginalAudio)); Toggle("Delete Temporary Files", isOn: binding(\.deleteTemporaryFiles)) }
     }.padding().frame(width: 480).onChange(of: apiKey) { _, value in if !value.isEmpty { try? SystemKeychainService().save(value, account: "gemma-api-key") } } }
     private func binding<T>(_ keyPath: WritableKeyPath<AppSettings, T>) -> Binding<T> { Binding(get: { settings.settings[keyPath: keyPath] }, set: { value in settings.update { $0[keyPath: keyPath] = value } }) }
+    private var summaryProviderBinding: Binding<SummaryProviderKind> { Binding(get: { settings.settings.summaryProvider == .ollama ? .ollama : .gemma }, set: { provider in settings.update { $0.summaryProvider = provider } }) }
 }

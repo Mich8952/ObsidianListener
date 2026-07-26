@@ -21,6 +21,7 @@ final class SummaryTests: XCTestCase {
 
 final class SettingsTests: XCTestCase {
     func testDefaultsAndMigrationSafeDecoding() throws { XCTAssertEqual(AppSettings.default.ollamaEndpoint, "http://localhost:11434"); let old = Data("{\"saveTranscript\":false}".utf8); let decoded = try JSONDecoder().decode(AppSettings.self, from: old); XCTAssertFalse(decoded.saveTranscript); XCTAssertEqual(decoded.whisperModel, "openai_whisper-base"); XCTAssertTrue(decoded.deleteTemporaryFiles) }
+    func testMigratesPreviousGemmaDefault() throws { let old = Data("{\"gemmaModel\":\"gemma-4-26b-a4b-it\"}".utf8); let decoded = try JSONDecoder().decode(AppSettings.self, from: old); XCTAssertEqual(decoded.gemmaModel, AppSettings.defaultGemmaModel) }
     @MainActor func testSettingsRoundTripIsIsolated() { let defaults = UserDefaults(suiteName: UUID().uuidString)!; let store = SettingsStore(defaults: defaults); store.update { $0.ollamaModel = "qwen" }; XCTAssertEqual(SettingsStore(defaults: defaults).settings.ollamaModel, "qwen") }
 }
 
