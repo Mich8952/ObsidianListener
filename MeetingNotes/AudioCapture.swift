@@ -74,11 +74,11 @@ final class CombinedAudioCaptureService: NSObject, AudioCaptureService, SCStream
         guard let targetFormat, let converter = AVAudioConverter(from: buffer.format, to: targetFormat) else { return nil }
         let capacity = AVAudioFrameCount(ceil(Double(buffer.frameLength) * targetFormat.sampleRate / buffer.format.sampleRate)) + 1
         guard let output = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: capacity) else { return nil }
-        var supplied = false
+        let input = ConverterInput(buffer)
         var conversionError: NSError?
         let status = converter.convert(to: output, error: &conversionError) { _, inputStatus in
-            guard !supplied else { inputStatus.pointee = .endOfStream; return nil }
-            supplied = true
+            guard !input.provided else { inputStatus.pointee = .endOfStream; return nil }
+            input.provided = true
             inputStatus.pointee = .haveData
             return buffer
         }

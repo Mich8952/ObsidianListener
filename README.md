@@ -7,7 +7,7 @@ MeetingNotes is a macOS 14+ Apple-silicon menu-bar recorder that captures microp
 1. Open **Settings**, choose an Obsidian folder, and grant the requested security-scoped access.
 2. Enter the default Whisper model (`openai_whisper-base`). Its initial preparation downloads the model; Start remains unavailable until folder access and privacy permissions are ready.
 3. Grant **Microphone** and **Screen & System Audio Recording** access when macOS requests them. Their privacy indicators remain visible while recording.
-4. Optionally choose Gemma and enter its API key (stored only in Keychain), or choose Ollama, set its endpoint, and install the selected Ollama model (for example, `ollama pull gemma3`).
+4. For Gemma, either enter the API key once in Settings (it is stored in Keychain) or copy `.env.example` to `.env` in the project folder and set `GEMMA_API_KEY=...`. The real `.env` is ignored by Git. For Ollama, set its endpoint and install the selected model (for example, `ollama pull gemma3`).
 
 Press Start, then Stop. Final transcription begins immediately; confirm the prefilled “Meeting” title to export. The provisional text is replaced by the final file transcription.
 
@@ -21,7 +21,7 @@ Press Start, then Stop. Final transcription begins immediately; confirm the pref
 
 Each recording has a manifest under `Application Support/MeetingNotes/Recordings/<UUID>`. Audio and manifest data are retained through transcription, summary, or export failures and can be retried after relaunch. Source and mixed files are removed only after a successful export and only when the settings permit it. If **Keep Original Audio** is enabled, the mixed WAV is copied before the Markdown note is written, so a completed note never points at missing media.
 
-Folder access is a security-scoped bookmark. If it becomes stale, reselect the Obsidian folder in Settings. Notes use `YYYY-MM-DD HHmm - Title.md` in local time and collision-safe numbered suffixes.
+Folder access is a security-scoped bookmark. If it becomes stale, reselect the output folder in Settings. Every completed meeting creates a collision-safe `YYYY-MM-DD HHmm - Title` subfolder directly inside that selected folder. It contains `meeting.md` (the organized note with Markdown checkboxes for to-dos), plus `transcript.md` and `audio.wav` only when those options are enabled.
 
 ## Build and test
 
