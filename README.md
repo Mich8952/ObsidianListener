@@ -32,6 +32,16 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Mee
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project MeetingNotes.xcodeproj -scheme MeetingNotes test
 ```
 
+## Standalone personal app
+
+To make a standalone `dist/MeetingNotes.app` that does not require Xcode to run, execute:
+
+```sh
+zsh scripts/package-local-app.sh
+```
+
+The packaged app does not contain your API key. Enter the key once in Settings and MeetingNotes stores it securely in your macOS Keychain for future sessions. You can open the app by double-clicking it in Finder or move it to your Applications folder.
+
 ## v1 limitations
 
 - Apple-silicon only; no speaker diarization.

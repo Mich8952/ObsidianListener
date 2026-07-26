@@ -1,3 +1,4 @@
 .env
 *.profraw
 **/xcuserdata/
+dist/
