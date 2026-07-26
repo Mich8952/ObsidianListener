@@ -1,0 +1,90 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1;
+ classes = {};
+ objectVersion = 56;
+ objects = {
+/* Begin PBXBuildFile section */
+  000000000000000000000101 = {isa = PBXBuildFile; fileRef = 000000000000000000000201; };
+  000000000000000000000102 = {isa = PBXBuildFile; fileRef = 000000000000000000000202; };
+  000000000000000000000103 = {isa = PBXBuildFile; fileRef = 000000000000000000000203; };
+  000000000000000000000104 = {isa = PBXBuildFile; fileRef = 000000000000000000000204; };
+  000000000000000000000105 = {isa = PBXBuildFile; fileRef = 000000000000000000000205; };
+  000000000000000000000106 = {isa = PBXBuildFile; fileRef = 000000000000000000000206; };
+  000000000000000000000107 = {isa = PBXBuildFile; fileRef = 000000000000000000000207; };
+  000000000000000000000108 = {isa = PBXBuildFile; fileRef = 000000000000000000000208; };
+  000000000000000000000109 = {isa = PBXBuildFile; fileRef = 000000000000000000000209; };
+  00000000000000000000010A = {isa = PBXBuildFile; fileRef = 00000000000000000000020A; };
+  00000000000000000000010B = {isa = PBXBuildFile; fileRef = 00000000000000000000020B; };
+  000000000000000000000110 = {isa = PBXBuildFile; fileRef = 000000000000000000000210; };
+  000000000000000000000111 = {isa = PBXBuildFile; productRef = 000000000000000000000501; };
+/* End PBXBuildFile section */
+/* Begin PBXFileReference section */
+  000000000000000000000201 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesApp.swift; sourceTree = "<group>"; };
+  000000000000000000000202 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+  000000000000000000000203 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interfaces.swift; sourceTree = "<group>"; };
+  000000000000000000000204 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+  000000000000000000000205 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryStore.swift; sourceTree = "<group>"; };
+  000000000000000000000206 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObsidianExportService.swift; sourceTree = "<group>"; };
+  000000000000000000000207 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryProviders.swift; sourceTree = "<group>"; };
+  000000000000000000000208 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCoordinator.swift; sourceTree = "<group>"; };
+  000000000000000000000209 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCapture.swift; sourceTree = "<group>"; };
+  00000000000000000000020A = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperKitProvider.swift; sourceTree = "<group>"; };
+  00000000000000000000020B = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+  000000000000000000000210 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesTests.swift; sourceTree = "<group>"; };
+  000000000000000000000301 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeetingNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+  000000000000000000000302 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MeetingNotesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+/* Begin PBXGroup section */
+  000000000000000000000401 = {isa = PBXGroup; children = (000000000000000000000402,000000000000000000000403,000000000000000000000404); sourceTree = "<group>"; };
+  000000000000000000000402 = {isa = PBXGroup; path = MeetingNotes; sourceTree = "<group>"; children = (000000000000000000000201,000000000000000000000202,000000000000000000000203,000000000000000000000204,000000000000000000000205,000000000000000000000206,000000000000000000000207,000000000000000000000208,000000000000000000000209,00000000000000000000020A,00000000000000000000020B); };
+  000000000000000000000403 = {isa = PBXGroup; path = MeetingNotesTests; sourceTree = "<group>"; children = (000000000000000000000210); };
+  000000000000000000000404 = {isa = PBXGroup; name = Products; sourceTree = "<group>"; children = (000000000000000000000301,000000000000000000000302); };
+/* End PBXGroup section */
+/* Begin PBXNativeTarget section */
+  000000000000000000000601 = {isa = PBXNativeTarget; buildConfigurationList = 000000000000000000000701; buildPhases = (000000000000000000000801,000000000000000000000802,000000000000000000000803); buildRules = (); dependencies = (); name = MeetingNotes; packageProductDependencies = (000000000000000000000501); productName = MeetingNotes; productReference = 000000000000000000000301; productType = "com.apple.product-type.application"; };
+  000000000000000000000602 = {isa = PBXNativeTarget; buildConfigurationList = 000000000000000000000702; buildPhases = (000000000000000000000811,000000000000000000000812,000000000000000000000813); buildRules = (); dependencies = (000000000000000000000901); name = MeetingNotesTests; productName = MeetingNotesTests; productReference = 000000000000000000000302; productType = "com.apple.product-type.bundle.unit-test"; };
+/* End PBXNativeTarget section */
+/* Begin PBXProject section */
+  000000000000000000000001 = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 1600; TargetAttributes = { 000000000000000000000601 = { CreatedOnToolsVersion = 16.3; }; 000000000000000000000602 = { CreatedOnToolsVersion = 16.3; TestTargetID = 000000000000000000000601; }; }; }; buildConfigurationList = 000000000000000000000700; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base); mainGroup = 000000000000000000000401; packageReferences = (000000000000000000000500); productRefGroup = 000000000000000000000404; projectDirPath = ""; projectRoot = ""; targets = (000000000000000000000601,000000000000000000000602); };
+/* End PBXProject section */
+/* Begin PBXResourcesBuildPhase section */
+  000000000000000000000803 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+  000000000000000000000813 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+/* Begin PBXSourcesBuildPhase section */
+  000000000000000000000801 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000101,000000000000000000000102,000000000000000000000103,000000000000000000000104,000000000000000000000105,000000000000000000000106,000000000000000000000107,000000000000000000000108,000000000000000000000109,00000000000000000000010A); runOnlyForDeploymentPostprocessing = 0; };
+  000000000000000000000811 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000110); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+/* Begin PBXFrameworksBuildPhase section */
+  000000000000000000000802 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000111); runOnlyForDeploymentPostprocessing = 0; };
+  000000000000000000000812 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+/* Begin PBXContainerItemProxy section */
+  000000000000000000000A01 = {isa = PBXContainerItemProxy; containerPortal = 000000000000000000000001; proxyType = 1; remoteGlobalIDString = 000000000000000000000601; remoteInfo = MeetingNotes; };
+/* End PBXContainerItemProxy section */
+/* Begin PBXTargetDependency section */
+  000000000000000000000901 = {isa = PBXTargetDependency; target = 000000000000000000000601; targetProxy = 000000000000000000000A01; };
+/* End PBXTargetDependency section */
+/* Begin XCRemoteSwiftPackageReference section */
+  000000000000000000000500 = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/argmaxinc/argmax-oss-swift"; requirement = { kind = exactVersion; version = 0.18.0; }; };
+/* End XCRemoteSwiftPackageReference section */
+/* Begin XCSwiftPackageProductDependency section */
+  000000000000000000000501 = {isa = XCSwiftPackageProductDependency; package = 000000000000000000000500; productName = WhisperKit; };
+/* End XCSwiftPackageProductDependency section */
+/* Begin XCBuildConfiguration section */
+  000000000000000000000710 = {isa = XCBuildConfiguration; buildSettings = { MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Debug; };
+  000000000000000000000711 = {isa = XCBuildConfiguration; buildSettings = { MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Release; };
+  000000000000000000000720 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ENABLE_TESTABILITY = YES; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app; PRODUCT_NAME = MeetingNotes; INFOPLIST_FILE = MeetingNotes/Info.plist; CODE_SIGN_ENTITLEMENTS = MeetingNotes/MeetingNotes.entitlements; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_APP_SANDBOX = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_VERSION = 6.0; }; name = Debug; };
+  000000000000000000000721 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app; PRODUCT_NAME = MeetingNotes; INFOPLIST_FILE = MeetingNotes/Info.plist; CODE_SIGN_ENTITLEMENTS = MeetingNotes/MeetingNotes.entitlements; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_APP_SANDBOX = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_VERSION = 6.0; }; name = Release; };
+  000000000000000000000730 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; BUNDLE_LOADER = "$(TEST_HOST)"; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app.tests; PRODUCT_MODULE_NAME = MeetingNotesTests; PRODUCT_NAME = MeetingNotesTests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetingNotes.app/Contents/MacOS/MeetingNotes"; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Debug; };
+  000000000000000000000731 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; BUNDLE_LOADER = "$(TEST_HOST)"; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app.tests; PRODUCT_MODULE_NAME = MeetingNotesTests; PRODUCT_NAME = MeetingNotesTests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetingNotes.app/Contents/MacOS/MeetingNotes"; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Release; };
+/* End XCBuildConfiguration section */
+/* Begin XCConfigurationList section */
+  000000000000000000000700 = {isa = XCConfigurationList; buildConfigurations = (000000000000000000000710,000000000000000000000711); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  000000000000000000000701 = {isa = XCConfigurationList; buildConfigurations = (000000000000000000000720,000000000000000000000721); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  000000000000000000000702 = {isa = XCConfigurationList; buildConfigurations = (000000000000000000000730,000000000000000000000731); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+ };
+ rootObject = 000000000000000000000001;
+}

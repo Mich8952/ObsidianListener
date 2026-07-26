@@ -1,0 +1,31 @@
+name: MeetingNotes
+options:
+  bundleIdPrefix: com.meetingnotes
+  deploymentTarget:
+    macOS: "14.0"
+packages:
+  ArgmaxOSS:
+    url: https://github.com/argmaxinc/argmax-oss-swift
+    exactVersion: 0.18.0
+targets:
+  MeetingNotes:
+    type: application
+    platform: macOS
+    sources: [MeetingNotes]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.meetingnotes.app
+        PRODUCT_NAME: MeetingNotes
+        CODE_SIGN_ENTITLEMENTS: MeetingNotes/MeetingNotes.entitlements
+        INFOPLIST_FILE: MeetingNotes/Info.plist
+        SWIFT_STRICT_CONCURRENCY: complete
+        ALWAYS_SEARCH_USER_PATHS: NO
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - package: ArgmaxOSS
+        product: WhisperKit
+  MeetingNotesTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: [MeetingNotesTests]
+    dependencies: [{target: MeetingNotes}]
