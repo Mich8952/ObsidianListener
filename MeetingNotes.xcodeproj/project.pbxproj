@@ -17,6 +17,7 @@
   00000000000000000000010A = {isa = PBXBuildFile; fileRef = 00000000000000000000020A; };
   00000000000000000000010B = {isa = PBXBuildFile; fileRef = 00000000000000000000020B; };
   00000000000000000000010C = {isa = PBXBuildFile; fileRef = 00000000000000000000020C; };
+  00000000000000000000010D = {isa = PBXBuildFile; fileRef = 00000000000000000000020D; };
   000000000000000000000110 = {isa = PBXBuildFile; fileRef = 000000000000000000000210; };
   000000000000000000000111 = {isa = PBXBuildFile; productRef = 000000000000000000000501; };
 /* End PBXBuildFile section */
@@ -33,13 +34,14 @@
   00000000000000000000020A = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperKitProvider.swift; sourceTree = "<group>"; };
   00000000000000000000020B = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
   00000000000000000000020C = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentSecrets.swift; sourceTree = "<group>"; };
+  00000000000000000000020D = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
   000000000000000000000210 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesTests.swift; sourceTree = "<group>"; };
   000000000000000000000301 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeetingNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
   000000000000000000000302 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MeetingNotesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 /* Begin PBXGroup section */
   000000000000000000000401 = {isa = PBXGroup; children = (000000000000000000000402,000000000000000000000403,000000000000000000000404); sourceTree = "<group>"; };
-  000000000000000000000402 = {isa = PBXGroup; path = MeetingNotes; sourceTree = "<group>"; children = (000000000000000000000201,000000000000000000000202,000000000000000000000203,000000000000000000000204,000000000000000000000205,000000000000000000000206,000000000000000000000207,000000000000000000000208,000000000000000000000209,00000000000000000000020A,00000000000000000000020B,00000000000000000000020C); };
+  000000000000000000000402 = {isa = PBXGroup; path = MeetingNotes; sourceTree = "<group>"; children = (000000000000000000000201,000000000000000000000202,000000000000000000000203,000000000000000000000204,000000000000000000000205,000000000000000000000206,000000000000000000000207,000000000000000000000208,000000000000000000000209,00000000000000000000020A,00000000000000000000020B,00000000000000000000020C,00000000000000000000020D); };
   000000000000000000000403 = {isa = PBXGroup; path = MeetingNotesTests; sourceTree = "<group>"; children = (000000000000000000000210); };
   000000000000000000000404 = {isa = PBXGroup; name = Products; sourceTree = "<group>"; children = (000000000000000000000301,000000000000000000000302); };
 /* End PBXGroup section */
@@ -51,7 +53,7 @@
   000000000000000000000001 = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 1600; TargetAttributes = { 000000000000000000000601 = { CreatedOnToolsVersion = 16.3; }; 000000000000000000000602 = { CreatedOnToolsVersion = 16.3; TestTargetID = 000000000000000000000601; }; }; }; buildConfigurationList = 000000000000000000000700; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base); mainGroup = 000000000000000000000401; packageReferences = (000000000000000000000500); productRefGroup = 000000000000000000000404; projectDirPath = ""; projectRoot = ""; targets = (000000000000000000000601,000000000000000000000602); };
 /* End PBXProject section */
 /* Begin PBXResourcesBuildPhase section */
-  000000000000000000000803 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+  000000000000000000000803 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (00000000000000000000010D); runOnlyForDeploymentPostprocessing = 0; };
   000000000000000000000813 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 /* Begin PBXSourcesBuildPhase section */
@@ -77,8 +79,8 @@
 /* Begin XCBuildConfiguration section */
   000000000000000000000710 = {isa = XCBuildConfiguration; buildSettings = { MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Debug; };
   000000000000000000000711 = {isa = XCBuildConfiguration; buildSettings = { MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Release; };
-  000000000000000000000720 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ENABLE_TESTABILITY = YES; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app; PRODUCT_NAME = MeetingNotes; INFOPLIST_FILE = MeetingNotes/Info.plist; CODE_SIGN_ENTITLEMENTS = MeetingNotes/MeetingNotes.entitlements; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_APP_SANDBOX = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_VERSION = 6.0; }; name = Debug; };
-  000000000000000000000721 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app; PRODUCT_NAME = MeetingNotes; INFOPLIST_FILE = MeetingNotes/Info.plist; CODE_SIGN_ENTITLEMENTS = MeetingNotes/MeetingNotes.entitlements; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_APP_SANDBOX = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_VERSION = 6.0; }; name = Release; };
+  000000000000000000000720 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ENABLE_TESTABILITY = YES; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app; PRODUCT_NAME = MeetingNotes; INFOPLIST_FILE = MeetingNotes/Info.plist; CODE_SIGN_ENTITLEMENTS = MeetingNotes/MeetingNotes.entitlements; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_APP_SANDBOX = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_VERSION = 6.0; }; name = Debug; };
+  000000000000000000000721 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app; PRODUCT_NAME = MeetingNotes; INFOPLIST_FILE = MeetingNotes/Info.plist; CODE_SIGN_ENTITLEMENTS = MeetingNotes/MeetingNotes.entitlements; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; ENABLE_APP_SANDBOX = YES; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_VERSION = 6.0; }; name = Release; };
   000000000000000000000730 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app.tests; PRODUCT_MODULE_NAME = MeetingNotesTests; PRODUCT_NAME = MeetingNotesTests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetingNotes.app/Contents/MacOS/MeetingNotes"; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Debug; };
   000000000000000000000731 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.meetingnotes.app.tests; PRODUCT_MODULE_NAME = MeetingNotesTests; PRODUCT_NAME = MeetingNotesTests; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetingNotes.app/Contents/MacOS/MeetingNotes"; MACOSX_DEPLOYMENT_TARGET = 14.0; SWIFT_VERSION = 6.0; }; name = Release; };
 /* End XCBuildConfiguration section */

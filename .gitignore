@@ -2,3 +2,4 @@
 *.profraw
 **/xcuserdata/
 dist/
+.DS_Store
