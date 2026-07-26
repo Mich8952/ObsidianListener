@@ -60,7 +60,7 @@ private struct SettingsView: View {
             TextField("Local model", text: binding(\.ollamaModel))
         }
         Section("Transcription") { TextField("Whisper model", text: binding(\.whisperModel)) }
-        Section("Export") { Toggle("Save Summary", isOn: binding(\.saveSummary)); Toggle("Save Transcript", isOn: binding(\.saveTranscript)); Toggle("Keep Original Audio", isOn: binding(\.keepOriginalAudio)); Toggle("Delete Temporary Files", isOn: binding(\.deleteTemporaryFiles)) }
+        Section("Export") { Toggle("Save Summary", isOn: binding(\.saveSummary)).disabled(settings.settings.summaryProvider != .none); if settings.settings.summaryProvider != .none { Text("Summary and to-dos are always saved when a provider is selected.").foregroundStyle(.secondary) }; Toggle("Save Transcript", isOn: binding(\.saveTranscript)); Toggle("Keep Original Audio", isOn: binding(\.keepOriginalAudio)); Toggle("Delete Temporary Files", isOn: binding(\.deleteTemporaryFiles)) }
     }.padding().frame(width: 480).onChange(of: apiKey) { _, value in if !value.isEmpty { try? SystemKeychainService().save(value, account: "gemma-api-key") } } }
     private func binding<T>(_ keyPath: WritableKeyPath<AppSettings, T>) -> Binding<T> { Binding(get: { settings.settings[keyPath: keyPath] }, set: { value in settings.update { $0[keyPath: keyPath] = value } }) }
     private var summaryProviderBinding: Binding<SummaryProviderKind> { Binding(get: { settings.settings.summaryProvider == .ollama ? .ollama : .gemma }, set: { provider in settings.update { $0.summaryProvider = provider } }) }

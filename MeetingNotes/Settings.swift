@@ -2,7 +2,7 @@ import Foundation
 import Security
 
 struct AppSettings: Codable, Equatable, Sendable {
-    static let defaultGemmaModel = "gemini-36-flash"
+    static let defaultGemmaModel = "gemma-4-26b-a4b-it"
     static let defaultObsidianFolder = URL(fileURLWithPath: "/Users/michaelmurray/Documents/GitHub/obsidian_notes/Obsidian Vault/MeetingNotes", isDirectory: true)
 
     var obsidianBookmark: Data?
@@ -16,9 +16,9 @@ struct AppSettings: Codable, Equatable, Sendable {
     var keepOriginalAudio: Bool
     var deleteTemporaryFiles: Bool
     init(obsidianBookmark: Data?, summaryProvider: SummaryProviderKind, gemmaModel: String, ollamaEndpoint: String, ollamaModel: String, whisperModel: String, saveSummary: Bool, saveTranscript: Bool, keepOriginalAudio: Bool, deleteTemporaryFiles: Bool) { self.obsidianBookmark = obsidianBookmark; self.summaryProvider = summaryProvider; self.gemmaModel = gemmaModel; self.ollamaEndpoint = ollamaEndpoint; self.ollamaModel = ollamaModel; self.whisperModel = whisperModel; self.saveSummary = saveSummary; self.saveTranscript = saveTranscript; self.keepOriginalAudio = keepOriginalAudio; self.deleteTemporaryFiles = deleteTemporaryFiles }
-    static let `default` = AppSettings(obsidianBookmark: nil, summaryProvider: .gemma, gemmaModel: defaultGemmaModel, ollamaEndpoint: "http://localhost:11434", ollamaModel: "gemma3", whisperModel: "openai_whisper-base", saveSummary: false, saveTranscript: true, keepOriginalAudio: false, deleteTemporaryFiles: true)
+    static let `default` = AppSettings(obsidianBookmark: nil, summaryProvider: .gemma, gemmaModel: defaultGemmaModel, ollamaEndpoint: "http://localhost:11434", ollamaModel: "gemma3", whisperModel: "openai_whisper-base", saveSummary: true, saveTranscript: true, keepOriginalAudio: false, deleteTemporaryFiles: true)
     enum CodingKeys: String, CodingKey { case obsidianBookmark, summaryProvider, gemmaModel, ollamaEndpoint, ollamaModel, whisperModel, saveSummary, saveTranscript, keepOriginalAudio, deleteTemporaryFiles }
-    init(from decoder: Decoder) throws { let c = try decoder.container(keyedBy: CodingKeys.self); let d = Self.default; obsidianBookmark = try c.decodeIfPresent(Data.self, forKey: .obsidianBookmark); summaryProvider = try c.decodeIfPresent(SummaryProviderKind.self, forKey: .summaryProvider) ?? d.summaryProvider; let savedGemmaModel = try c.decodeIfPresent(String.self, forKey: .gemmaModel); gemmaModel = savedGemmaModel == "gemma-4-26b-a4b-it" || savedGemmaModel == "gemma-4-31b-it" ? Self.defaultGemmaModel : (savedGemmaModel ?? d.gemmaModel); ollamaEndpoint = try c.decodeIfPresent(String.self, forKey: .ollamaEndpoint) ?? d.ollamaEndpoint; ollamaModel = try c.decodeIfPresent(String.self, forKey: .ollamaModel) ?? d.ollamaModel; whisperModel = try c.decodeIfPresent(String.self, forKey: .whisperModel) ?? d.whisperModel; saveSummary = try c.decodeIfPresent(Bool.self, forKey: .saveSummary) ?? d.saveSummary; saveTranscript = try c.decodeIfPresent(Bool.self, forKey: .saveTranscript) ?? d.saveTranscript; keepOriginalAudio = try c.decodeIfPresent(Bool.self, forKey: .keepOriginalAudio) ?? d.keepOriginalAudio; deleteTemporaryFiles = try c.decodeIfPresent(Bool.self, forKey: .deleteTemporaryFiles) ?? d.deleteTemporaryFiles }
+    init(from decoder: Decoder) throws { let c = try decoder.container(keyedBy: CodingKeys.self); let d = Self.default; obsidianBookmark = try c.decodeIfPresent(Data.self, forKey: .obsidianBookmark); summaryProvider = try c.decodeIfPresent(SummaryProviderKind.self, forKey: .summaryProvider) ?? d.summaryProvider; let savedGemmaModel = try c.decodeIfPresent(String.self, forKey: .gemmaModel); gemmaModel = savedGemmaModel == "gemini-36-flash" ? Self.defaultGemmaModel : (savedGemmaModel ?? d.gemmaModel); ollamaEndpoint = try c.decodeIfPresent(String.self, forKey: .ollamaEndpoint) ?? d.ollamaEndpoint; ollamaModel = try c.decodeIfPresent(String.self, forKey: .ollamaModel) ?? d.ollamaModel; whisperModel = try c.decodeIfPresent(String.self, forKey: .whisperModel) ?? d.whisperModel; saveSummary = summaryProvider == .none ? false : true; saveTranscript = try c.decodeIfPresent(Bool.self, forKey: .saveTranscript) ?? d.saveTranscript; keepOriginalAudio = try c.decodeIfPresent(Bool.self, forKey: .keepOriginalAudio) ?? d.keepOriginalAudio; deleteTemporaryFiles = try c.decodeIfPresent(Bool.self, forKey: .deleteTemporaryFiles) ?? d.deleteTemporaryFiles }
 }
 
 @MainActor final class SettingsStore: ObservableObject {
@@ -36,7 +36,7 @@ struct AppSettings: Codable, Equatable, Sendable {
             try? setObsidianFolder(AppSettings.defaultObsidianFolder)
         }
     }
-    func update(_ mutate: (inout AppSettings) -> Void) { mutate(&settings); if let data = try? JSONEncoder().encode(settings) { defaults.set(data, forKey: key) } }
+    func update(_ mutate: (inout AppSettings) -> Void) { mutate(&settings); settings.saveSummary = settings.summaryProvider != .none; if let data = try? JSONEncoder().encode(settings) { defaults.set(data, forKey: key) } }
     func setObsidianFolder(_ url: URL) throws {
         let bookmark = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
         update { $0.obsidianBookmark = bookmark }

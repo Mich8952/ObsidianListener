@@ -32,7 +32,7 @@ final class DefaultObsidianExportService: ObsidianExportService {
         var out = "---\ntitle: \"\(yaml(session.title))\"\ncreated: \(iso)\nduration_seconds: \(Int(session.duration))\n---\n\n# \(session.title)\n"
         if let audioFileName { out += "\n[[\(audioFileName)]]\n" }
         if saveTranscript { out += "\n[[transcript.md|Transcript]]\n" }
-        if saveSummary, let s = session.summary { out += "\n## Summary\n\n\(s.summary)\n\n## Decisions\n\n\(bullets(s.decisions))\n\n## To-Dos\n\n\(tasks(s.actionItems))\n\n## Open Questions\n\n\(bullets(s.openQuestions))\n\n## Technical Details\n\n\(bullets(s.technicalDetails))\n" } else { out += "\n## Summary\n\nNo summary was requested for this session.\n" }
+        if saveSummary, let s = session.summary { out += "\n## Summary\n\n\(s.summary)\n\n## Decisions\n\n\(bullets(s.decisions))\n\n## To-Dos\n\n\(tasks(s.actionItems))\n\n## Open Questions\n\n\(bullets(s.openQuestions))\n\n## Technical Details\n\n\(bullets(s.technicalDetails))\n" } else if let error = session.error { out += "\n## Summary\n\nSummary generation failed: \(error)\n" } else { out += "\n## Summary\n\nNo summary provider was selected for this session.\n" }
         return out
     }
     func renderTranscriptMarkdown(session: RecordingSession) -> String { let iso = ISO8601DateFormatter().string(from: session.createdAt); let segments = session.transcript.segments.isEmpty ? session.transcript.text : session.transcript.segments.map { "[\(clock($0.start))] \($0.text)" }.joined(separator: "\n"); return "---\ntitle: \"\(yaml(session.title)) — Transcript\"\ncreated: \(iso)\n---\n\n# \(session.title) Transcript\n\n\(segments)\n" }
