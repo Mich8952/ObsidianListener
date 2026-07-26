@@ -24,6 +24,7 @@ private struct MenuContentView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack { Text("MeetingNotes").font(.headline); Spacer(); Text(status).foregroundStyle(.secondary) }
+            if let error = coordinator.summaryError { Label("Summary failed: \(error)", systemImage: "exclamationmark.triangle.fill").font(.callout).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
             if case .recording = coordinator.state { TimelineView(.periodic(from: .now, by: 1)) { context in Text("Recording \(elapsed(context.date))").monospacedDigit() } }
             if case .awaitingTitle = coordinator.state { TextField("Title", text: $title); Button("Transcribe and Export") { Task { await coordinator.confirmTitle(title) } }.buttonStyle(.borderedProminent) }
             ScrollView { Text(coordinator.liveTranscript.isEmpty ? "Live transcript will appear here." : coordinator.liveTranscript).frame(maxWidth: .infinity, alignment: .leading).textSelection(.enabled).font(.callout) }.frame(height: 180)
