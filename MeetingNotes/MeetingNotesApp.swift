@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @main struct MeetingNotesApp: App {
@@ -5,7 +6,7 @@ import SwiftUI
     @StateObject private var coordinator: MeetingCoordinator
     init() {
         let settings = SettingsStore()
-        let recovery = try! RecoveryStore()
+        let recovery = RecoveryStore()
         _settings = StateObject(wrappedValue: settings)
         _coordinator = StateObject(wrappedValue: MeetingCoordinator(settings: settings, capture: CombinedAudioCaptureService(), transcription: WhisperKitTranscriptionProvider(), exporter: DefaultObsidianExportService(), recovery: recovery))
     }
@@ -28,7 +29,8 @@ private struct MenuContentView: View {
             ScrollView { Text(coordinator.liveTranscript.isEmpty ? "Live transcript will appear here." : coordinator.liveTranscript).frame(maxWidth: .infinity, alignment: .leading).textSelection(.enabled).font(.callout) }.frame(height: 180)
             HStack { switch coordinator.state { case .idle, .completed, .recoverableFailure: if !coordinator.modelReady { Button("Download Whisper Model") { Task { await coordinator.prepareModel() } } } else { Button("Start") { Task { await coordinator.start() } }.disabled(settings.settings.obsidianBookmark == nil) }; case .recording: Button("Stop") { Task { await coordinator.stop() } }.buttonStyle(.borderedProminent); default: ProgressView() }; Spacer(); Button("Open Last Note") { coordinator.openLastNote() }.disabled(coordinator.session?.exportedNotePath == nil) }
             if case .recoverableFailure = coordinator.state { Button("Retry Last Recording") { Task { await coordinator.retryLastRecording() } } }
-            Divider(); SettingsLink { Text("Settings…") }
+            Divider()
+            HStack { SettingsLink { Text("Settings…") }; Spacer(); Button("Quit MeetingNotes") { NSApplication.shared.terminate(nil) } }
         }.padding().frame(width: 380)
     }
     private var status: String { switch coordinator.state { case .idle: "Ready"; case .preparing: "Preparing"; case .recording: "Recording"; case .stopping: "Finalizing audio"; case .awaitingTitle: "Ready to transcribe"; case .transcribing: "Transcribing"; case .summarizing: "Summarizing"; case .exporting: "Exporting"; case .completed: "Exported"; case let .recoverableFailure(error): error } }

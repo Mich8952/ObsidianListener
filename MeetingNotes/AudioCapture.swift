@@ -3,8 +3,8 @@ import CoreMedia
 import Foundation
 import ScreenCaptureKit
 
-enum CaptureError: LocalizedError { case microphonePermission, screenPermission, noInput, noDisplay
-    var errorDescription: String? { switch self { case .microphonePermission: "Allow Microphone access in System Settings > Privacy & Security > Microphone."; case .screenPermission: "Allow Screen & System Audio Recording in System Settings > Privacy & Security > Screen & System Audio Recording."; case .noInput: "No microphone input is available."; case .noDisplay: "No display is available for system audio capture." } }
+enum CaptureError: LocalizedError { case microphonePermission, screenPermission, noInput, noDisplay, audioFormatUnavailable
+    var errorDescription: String? { switch self { case .microphonePermission: "Allow Microphone access in System Settings > Privacy & Security > Microphone."; case .screenPermission: "Allow Screen & System Audio Recording in System Settings > Privacy & Security > Screen & System Audio Recording."; case .noInput: "No microphone input is available."; case .noDisplay: "No display is available for system audio capture."; case .audioFormatUnavailable: "The required 16 kHz audio format is not available on this Mac." } }
 }
 
 /// Concurrent microphone and ScreenCaptureKit system-audio recorder. Both files are normalized to 16 kHz mono Float32 WAV before mixing.
@@ -19,9 +19,9 @@ final class CombinedAudioCaptureService: NSObject, AudioCaptureService, SCStream
     private var sessionStart: Date = .now
     private let io = DispatchQueue(label: "MeetingNotes.capture.io")
     private var maximumTimestamp: TimeInterval = 0
-    private let targetFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 1, interleaved: false)!
+    private let targetFormat: AVAudioFormat?
 
-    override init() { super.init(); NotificationCenter.default.addObserver(self, selector: #selector(configurationChanged), name: .AVAudioEngineConfigurationChange, object: engine) }
+    override init() { targetFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 1, interleaved: false); super.init(); NotificationCenter.default.addObserver(self, selector: #selector(configurationChanged), name: .AVAudioEngineConfigurationChange, object: engine) }
     deinit { NotificationCenter.default.removeObserver(self) }
     func checkPermissions() async -> CapturePermission {
         let mic = AVCaptureDevice.authorizationStatus(for: .audio)
@@ -31,6 +31,7 @@ final class CombinedAudioCaptureService: NSObject, AudioCaptureService, SCStream
         return CGPreflightScreenCaptureAccess() ? .ready : .screenRecordingDenied
     }
     func start(sessionDirectory: URL, sessionStart: Date) async throws {
+        guard let targetFormat else { throw CaptureError.audioFormatUnavailable }
         directory = sessionDirectory; self.sessionStart = sessionStart; maximumTimestamp = 0
         guard engine.inputNode.inputFormat(forBus: 0).sampleRate > 0 else { throw CaptureError.noInput }
         let micURL = sessionDirectory.appendingPathComponent("microphone.wav")
@@ -58,7 +59,7 @@ final class CombinedAudioCaptureService: NSObject, AudioCaptureService, SCStream
         return CapturedAudio(microphoneURL: microphoneURL, systemURL: systemURL, mixedWAVURL: mixed, duration: maximumTimestamp)
     }
     private func writeMicrophone(_ buffer: AVAudioPCMBuffer, timestamp: AVAudioTime) { let t = Date.now.timeIntervalSince(sessionStart); write(buffer, to: micFile, timestamp: t) }
-    func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) { guard type == .audio, let pcm = Self.pcm(from: sampleBuffer, target: targetFormat) else { return }; let seconds = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)); write(pcm, to: systemFile, timestamp: seconds.isFinite ? seconds : Date.now.timeIntervalSince(sessionStart)) }
+    func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) { guard type == .audio, let targetFormat, let pcm = Self.pcm(from: sampleBuffer, target: targetFormat) else { return }; let seconds = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)); write(pcm, to: systemFile, timestamp: seconds.isFinite ? seconds : Date.now.timeIntervalSince(sessionStart)) }
     func stream(_ stream: SCStream, didStopWithError error: any Error) { onHealth?(.degraded("System audio stopped: \(error.localizedDescription). Microphone recording continues.")) }
     private func write(_ buffer: AVAudioPCMBuffer, to file: AVAudioFile?, timestamp: TimeInterval) { io.async { [weak self] in guard let self, let file else { return }; do { try file.write(from: buffer); self.maximumTimestamp = max(self.maximumTimestamp, timestamp + Double(buffer.frameLength) / 16_000); self.onPCM?(buffer, timestamp) } catch { self.onHealth?(.degraded("Audio source write failed: \(error.localizedDescription)")) } } }
     @objc private func configurationChanged() { guard engine.isRunning else { return }; do { engine.stop(); try engine.start(); onHealth?(.healthy) } catch { onHealth?(.degraded("Microphone device changed and could not restart. System audio continues.")) } }
@@ -76,7 +77,7 @@ private final class ConverterInput: @unchecked Sendable { let buffer: AVAudioPCM
 
 enum WavMixer {
     static func mix(_ first: URL?, _ second: URL?, to output: URL) throws {
-        let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 1, interleaved: false)!
+        guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 1, interleaved: false) else { throw CaptureError.audioFormatUnavailable }
         let outputFile = try AVAudioFile(forWriting: output, settings: format.settings, commonFormat: .pcmFormatFloat32, interleaved: false)
         let files = try [first, second].compactMap { url -> AVAudioFile? in guard let url else { return nil }; return try AVAudioFile(forReading: url) }
         let maxFrames = files.map { $0.length }.max() ?? 0

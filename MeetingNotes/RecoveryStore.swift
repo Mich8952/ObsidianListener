@@ -2,9 +2,18 @@ import Foundation
 
 actor RecoveryStore {
     let root: URL
-    init(fileManager: FileManager = .default) throws {
-        root = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("MeetingNotes/Recordings", isDirectory: true)
-        try fileManager.createDirectory(at: root, withIntermediateDirectories: true)
+    init(fileManager: FileManager = .default) {
+        let preferredRoot = (try? fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true))?
+            .appendingPathComponent("MeetingNotes/Recordings", isDirectory: true)
+        let fallbackRoot = fileManager.temporaryDirectory
+            .appendingPathComponent("MeetingNotes/Recordings", isDirectory: true)
+
+        if let preferredRoot, (try? fileManager.createDirectory(at: preferredRoot, withIntermediateDirectories: true)) != nil {
+            root = preferredRoot
+        } else {
+            try? fileManager.createDirectory(at: fallbackRoot, withIntermediateDirectories: true)
+            root = fallbackRoot
+        }
     }
     func directory(for id: UUID) throws -> URL { let url = root.appendingPathComponent(id.uuidString, isDirectory: true); try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true); return url }
     func save(_ session: RecordingSession) throws { let url = try directory(for: session.id).appendingPathComponent("session.json"); let data = try JSONEncoder().encode(session); try data.write(to: url, options: .atomic) }
